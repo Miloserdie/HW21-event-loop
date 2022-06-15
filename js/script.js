@@ -1,6 +1,6 @@
 class PostsAndComments{
-	constructor(elOfPost) {
-		this.elOfPost = elOfPost;
+	constructor(el) {
+		this.el = el;
 		this.posts = [];
 		this.comments = [];
 	}
@@ -30,7 +30,7 @@ class PostsAndComments{
 		try{
 			if(response.ok) {
 				this.comments = json;
-				this.renderComments(this.comments)
+				this.findComments(this.comments)
 			} else{
 				throw new Error('Error');
 			}
@@ -47,12 +47,12 @@ class PostsAndComments{
 				return
 			}
 			postsItem += `<li class="post" data-postid="${el.id}"><h1 class="post-title">${el.title}</h1><p class="post-discription">${el.body}</p><h2 class="post-comments-title">Comments</h2><ul class="post__comments">${comments}</ul></li>`
-			this.elOfPost.innerHTML = postsItem;
+			this.el.innerHTML = postsItem;
 		}
 		
 	}
 
-	renderComments(comments = []) {
+	findComments(comments = []) {
 		let commentsItem = '';
 		for(let el of comments) {
 			if(!el) {
@@ -60,23 +60,21 @@ class PostsAndComments{
 			}
 			commentsItem += `<li class="comments-item" data-commentid="${el.id}"><p class="comment-author">Author: ${el.name}</p><p class="comment-text">Text: ${el.body}</p></li>`;
 		}
-
 		this.renderPosts(this.posts, commentsItem)
 	}
 }
 
-const postsHtml = document.querySelector('.posts');
-const postsAndCommenst = new PostsAndComments(postsHtml)
+const postsElem = document.querySelector('.posts');
+const postsAndCommenst = new PostsAndComments(postsElem)
 
 postsAndCommenst.getPosts('https://jsonplaceholder.typicode.com/posts/1')
 
-const container = document.querySelector('.container');
+const containerElem = document.querySelector('.container');
 let i = 1;
 
-container.addEventListener('click', (event) => {
+containerElem.addEventListener('click', (event) => {
 	if(event.target.classList.contains('prev-post')) {
 		postsAndCommenst.getPosts(`https://jsonplaceholder.typicode.com/posts/${i === 1 ? i = 100 : --i}`)
-		
 	} else if(event.target.classList.contains('next-post')) {
 		postsAndCommenst.getPosts(`https://jsonplaceholder.typicode.com/posts/${i === 100 ? i = 1 : ++i}`)
 	}
